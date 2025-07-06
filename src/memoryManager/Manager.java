@@ -13,7 +13,7 @@ public class Manager {
         this.heap = new Heap(tamanhoHeap);
     }
 
-    public void alocaHeap(int idRequest, int tamanhoRequest) {
+    public synchronized void alocaHeap(int idRequest, int tamanhoRequest) {
         int index = heap.getFirstFreePosition();
 
         while(tamanhoRequest > 0) {
@@ -25,16 +25,17 @@ public class Manager {
         heap.setPosLivre((heap.getFirstFreePosition() + tamanhoRequest));
     }
 
-    public void desalocaHeap(int idRequest, int tamanhoRequest) {
+    public synchronized void desalocaHeap(int idRequest, int tamanhoRequest) {
         int indexRemove = 0;
         while(tamanhoRequest > 0) {
             if(heap.getHeap()[indexRemove] == idRequest) {
                 heap.getHeap()[indexRemove] = 0;
                 tamanhoRequest--;
             }
+
+            indexRemove++;
         }
         desfragmentaHeap();
-        heap.setPosLivre((heap.getFirstFreePosition() - tamanhoRequest));
     }
 
     private void desfragmentaHeap() {
@@ -46,14 +47,15 @@ public class Manager {
                 indexHeap++;
             }
         }
+        heap.setPosLivre(indexHeap);
         heap.setHeap(heapDesgrafmentada);
     }
 
-    public void alocaRequest(Request newRequest) {
+    public synchronized void alocaRequest(Request newRequest) {
         listRequest.addLast(newRequest);
     }
 
-    public Request removeRequest() {
+    public synchronized Request removeRequest() {
         if(listRequest.isEmpty()) {
             return null;
         }
@@ -72,4 +74,5 @@ public class Manager {
 
         return true;
     }
+
 }

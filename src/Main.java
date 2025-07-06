@@ -1,4 +1,6 @@
+import consumer.Consumer;
 import memoryManager.Manager;
+import producer.Producer;
 import request.Request;
 
 import java.io.FileWriter;
@@ -13,27 +15,20 @@ public class Main {
             System.out.println("Informe o tamanho da Heap em KB: ");
             Scanner scan = new Scanner(System.in);
             int tamanhoHeap = ((scan.nextInt()*1024)/4);
-            int numRequest = 155000;
+            int numRequest = 500000;
 
             Manager memoryManager = new Manager(tamanhoHeap);
+            Producer producer = new Producer(memoryManager, numRequest);
+            Consumer consumer = new Consumer(memoryManager);
 
             long executionTimeBegin = System.currentTimeMillis();
-            for(int i = 0; i < numRequest; i++) {
-                Request newRequest = new Request(i+1);
-                memoryManager.alocaRequest(newRequest);
-                if(!memoryManager.freeSpaceHeap(newRequest.getTamanhoRequest())) {
-                    int memoryFree = 0;
-                    while(memoryFree < (0.3*memoryManager.getHeap().getTamanhoHeap())) {
-                        Request removeRequest = memoryManager.removeRequest();
-                        if(removeRequest == null) {
-                            break;
-                        }
-                        memoryFree += removeRequest.getTamanhoRequest();
-                        memoryManager.desalocaHeap(removeRequest.getIdRequest(), removeRequest.getTamanhoRequest());
-                    }
-                }
-                memoryManager.alocaHeap(newRequest.getIdRequest(), newRequest.getTamanhoRequest());
-            }
+
+            producer.start();
+            consumer.start();
+
+            producer.join();
+            consumer.join();
+
             long executionTimeFinish = System.currentTimeMillis();
 
             FileWriter relatorio = getWriter(numRequest, tamanhoHeap, (executionTimeFinish - executionTimeBegin));
