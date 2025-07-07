@@ -21,17 +21,18 @@ public class Main {
             Producer producer = new Producer(memoryManager, numRequest);
             Consumer consumer = new Consumer(memoryManager);
 
-            long executionTimeBegin = System.currentTimeMillis();
-
             producer.start();
             consumer.start();
 
             producer.join();
             consumer.join();
 
-            long executionTimeFinish = System.currentTimeMillis();
+            long timeProducer = (producer.finishTime - producer.beginTime);
+            long timeConsumer = (consumer.finishTime - consumer.beginTime);
 
-            FileWriter relatorio = getWriter(numRequest, tamanhoHeap, (executionTimeFinish - executionTimeBegin));
+            long executationTime = (timeProducer + timeConsumer);
+
+            FileWriter relatorio = getWriter(numRequest, tamanhoHeap, executationTime);
             relatorio.close();
 
         } catch (Exception executionError) {

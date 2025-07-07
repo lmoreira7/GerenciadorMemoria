@@ -5,13 +5,15 @@ import request.Request;
 
 public class Consumer extends Thread{
     Manager memoryManager;
+    public long beginTime;
+    public long finishTime;
 
     public Consumer(Manager memoryManager) {
         this.memoryManager = memoryManager;
     }
 
     public void run() {
-
+        beginTime = System.currentTimeMillis();
         try {
             while(true) {
                 Request removeRequest = memoryManager.removeRequest();
@@ -40,5 +42,7 @@ public class Consumer extends Thread{
         } catch (Exception error) {
             error.printStackTrace();
         }
+
+        finishTime = System.currentTimeMillis();
     }
 }

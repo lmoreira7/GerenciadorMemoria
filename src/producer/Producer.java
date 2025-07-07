@@ -6,6 +6,8 @@ import request.Request;
 public class Producer extends Thread{
     private Manager memoryManager;
     private int numRequest;
+    public long beginTime;
+    public long finishTime;
 
     public Producer(Manager memoryManager, int numRequest) {
         this.memoryManager = memoryManager;
@@ -13,7 +15,7 @@ public class Producer extends Thread{
     }
 
     public void run() {
-
+        beginTime = System.currentTimeMillis();
         for(int i = 0; i < numRequest; i++) {
             Request newRequest = new Request(i+1);
             try {
@@ -23,5 +25,6 @@ public class Producer extends Thread{
                 error.printStackTrace();
             }
         }
+        finishTime = System.currentTimeMillis();
     }
 }
