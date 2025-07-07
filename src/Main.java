@@ -6,6 +6,8 @@ import request.Request;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
 
@@ -15,24 +17,35 @@ public class Main {
             System.out.println("Informe o tamanho da Heap em KB: ");
             Scanner scan = new Scanner(System.in);
             int tamanhoHeap = ((scan.nextInt()*1024)/4);
-            int numRequest = 500000;
+            int numRequest = 1000000;
 
             Manager memoryManager = new Manager(tamanhoHeap);
-            Producer producer = new Producer(memoryManager, numRequest);
-            Consumer consumer = new Consumer(memoryManager);
+
+            BlockingQueue<Request> listRequest = new LinkedBlockingQueue<>();
+
+            Producer producer = new Producer(numRequest, listRequest);
+            Consumer consumer1 = new Consumer(memoryManager, listRequest);
+            Consumer consumer2 = new Consumer(memoryManager, listRequest);
+
+            long start = System.currentTimeMillis();
 
             producer.start();
-            consumer.start();
+            consumer1.start();
+            consumer2.start();
 
             producer.join();
-            consumer.join();
+            consumer1.join();
+            consumer2.join();
 
-            long timeProducer = (producer.finishTime - producer.beginTime);
-            long timeConsumer = (consumer.finishTime - consumer.beginTime);
+            //long timeProducer = (producer.finishTime - producer.beginTime);
+            //long timeConsumer = (consumer.finishTime - consumer.beginTime);
 
-            long executationTime = (timeProducer + timeConsumer);
+            //long executationTime = (timeProducer + timeConsumer);
 
-            FileWriter relatorio = getWriter(numRequest, tamanhoHeap, executationTime);
+            long end = System.currentTimeMillis();
+
+
+            FileWriter relatorio = getWriter(numRequest, tamanhoHeap, (end - start));
             relatorio.close();
 
         } catch (Exception executionError) {

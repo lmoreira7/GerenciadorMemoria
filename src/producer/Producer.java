@@ -3,27 +3,32 @@ package producer;
 import memoryManager.Manager;
 import request.Request;
 
+import java.util.concurrent.BlockingQueue;
+
 public class Producer extends Thread{
     private Manager memoryManager;
     private int numRequest;
     public long beginTime;
     public long finishTime;
+    private final BlockingQueue<Request> listRequest;
 
-    public Producer(Manager memoryManager, int numRequest) {
-        this.memoryManager = memoryManager;
+    public Producer(int numRequest, BlockingQueue<Request> listRequest) {
         this.numRequest = numRequest;
+        this.listRequest = listRequest;
     }
 
     public void run() {
         beginTime = System.currentTimeMillis();
-        for(int i = 0; i < numRequest; i++) {
-            Request newRequest = new Request(i+1);
-            try {
-                memoryManager.alocaRequest(newRequest);
-                memoryManager.alocaHeap(newRequest.getIdRequest(), newRequest.getTamanhoRequest());
-            } catch (Exception error) {
-                error.printStackTrace();
+        try {
+            for(int i = 0 ; i < numRequest; i++) {
+                listRequest.put(new Request(i+1));
             }
+
+            listRequest.put(new Request(-1));
+            listRequest.put(new Request(-1));
+
+        } catch (Exception error) {
+            error.printStackTrace();
         }
         finishTime = System.currentTimeMillis();
     }
