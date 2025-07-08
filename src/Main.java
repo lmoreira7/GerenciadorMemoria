@@ -6,8 +6,7 @@ import request.Request;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class Main {
 
@@ -21,7 +20,7 @@ public class Main {
 
             Manager memoryManager = new Manager(tamanhoHeap);
 
-            BlockingQueue<Request> listRequest = new LinkedBlockingQueue<>();
+            ArrayBlockingQueue<Request> listRequest = new ArrayBlockingQueue<>(numRequest+2);
 
             Producer producer = new Producer(numRequest, listRequest);
             Consumer consumer1 = new Consumer(memoryManager, listRequest);
@@ -37,13 +36,7 @@ public class Main {
             consumer1.join();
             consumer2.join();
 
-            //long timeProducer = (producer.finishTime - producer.beginTime);
-            //long timeConsumer = (consumer.finishTime - consumer.beginTime);
-
-            //long executationTime = (timeProducer + timeConsumer);
-
             long end = System.currentTimeMillis();
-
 
             FileWriter relatorio = getWriter(numRequest, tamanhoHeap, (end - start));
             relatorio.close();

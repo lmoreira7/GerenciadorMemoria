@@ -3,15 +3,16 @@ package consumer;
 import memoryManager.Manager;
 import request.Request;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Consumer extends Thread{
     Manager memoryManager;
     public long beginTime;
     public long finishTime;
-    private final BlockingQueue<Request> listRequest;
+    private final ArrayBlockingQueue<Request> listRequest;
 
-    public Consumer(Manager memoryManager, BlockingQueue<Request> listRequest) {
+    public Consumer(Manager memoryManager, ArrayBlockingQueue<Request> listRequest) {
         this.memoryManager = memoryManager;
         this.listRequest = listRequest;
     }
@@ -20,9 +21,9 @@ public class Consumer extends Thread{
         beginTime = System.currentTimeMillis();
         try {
             while(true) {
-                Request request = listRequest.take();
+                Request request = listRequest.poll();
 
-                if (request.getIdRequest() == -1) {
+                if (request == null) {
                     break;
                 }
 

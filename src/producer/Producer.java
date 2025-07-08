@@ -3,6 +3,7 @@ package producer;
 import memoryManager.Manager;
 import request.Request;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Producer extends Thread{
@@ -10,9 +11,9 @@ public class Producer extends Thread{
     private int numRequest;
     public long beginTime;
     public long finishTime;
-    private final BlockingQueue<Request> listRequest;
+    private final ArrayBlockingQueue<Request> listRequest;
 
-    public Producer(int numRequest, BlockingQueue<Request> listRequest) {
+    public Producer(int numRequest, ArrayBlockingQueue<Request> listRequest) {
         this.numRequest = numRequest;
         this.listRequest = listRequest;
     }
